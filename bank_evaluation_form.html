@@ -1,0 +1,1499 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>فرم ارزیابی بازاریابی شعبه — بانک اقتصادنوین</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                DEFAULT: "#662d91",
+                light: "#f5effb",
+                mid: "#9564d4",
+                border: "#d4b8f0",
+                dark: "#4a1f6a",
+              },
+            },
+            fontFamily: { sans: ["Vazirmatn", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        font-family: "Vazirmatn", sans-serif;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f8f5fc;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      .section-body {
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+      .section-body.collapsed {
+        max-height: 0 !important;
+      }
+      .toast {
+        transition: opacity 0.3s ease;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #9564d4;
+        box-shadow: 0 0 0 3px rgba(150, 100, 212, 0.12);
+      }
+      .likert-btn {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        background: #fff;
+        color: #9ca3af;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .likert-btn:hover {
+        border-color: #9564d4;
+        color: #662d91;
+        background: #f5effb;
+      }
+      .likert-btn.a1 {
+        background: #fce4ec;
+        border-color: #e91e63;
+        color: #c2185b;
+      }
+      .likert-btn.a2 {
+        background: #fff3e0;
+        border-color: #fb8c00;
+        color: #e65100;
+      }
+      .likert-btn.a3 {
+        background: #fffde7;
+        border-color: #fbc02d;
+        color: #f57f17;
+      }
+      .likert-btn.a4 {
+        background: #e8f5e9;
+        border-color: #43a047;
+        color: #2e7d32;
+      }
+      .likert-btn.a5 {
+        background: #f5effb;
+        border-color: #662d91;
+        color: #662d91;
+      }
+      .rank-bar-fill {
+        transition: width 0.5s ease;
+      }
+      .eval-table-wrap {
+        overflow-x: auto;
+      }
+      .eval-table {
+        min-width: 560px;
+      }
+      select option {
+        font-family: "Vazirmatn", sans-serif;
+      }
+      .weight-input {
+        width: 52px;
+        text-align: center;
+        border: 1px solid #d4b8f0;
+        border-radius: 6px;
+        padding: 3px 6px;
+        font-size: 12px;
+        color: #662d91;
+        background: #fff;
+      }
+      .weight-input:focus {
+        outline: none;
+        border-color: #9564d4;
+        box-shadow: 0 0 0 2px rgba(150, 100, 212, 0.15);
+      }
+      .tab-btn {
+        transition: all 0.15s;
+      }
+      .tab-btn.active {
+        background: #662d91;
+        color: #fff;
+        border-color: #662d91;
+      }
+      .tab-btn:not(.active) {
+        background: #fff;
+        color: #662d91;
+        border: 1px solid #d4b8f0;
+      }
+      /* Multi-select dropdown */
+      .multi-check-wrap {
+        position: relative;
+      }
+      .multi-check-btn {
+        width: 100%;
+        text-align: right;
+        cursor: pointer;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #374151;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        font-family: "Vazirmatn", sans-serif;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .multi-check-btn:hover {
+        border-color: #d4b8f0;
+      }
+      .multi-check-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        z-index: 200;
+        background: #fff;
+        border: 1px solid #d4b8f0;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(102, 45, 145, 0.13);
+        padding: 6px 0;
+        min-width: 160px;
+        display: none;
+      }
+      .multi-check-dropdown.open {
+        display: block;
+      }
+      .multi-check-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px;
+        cursor: pointer;
+        font-size: 12px;
+        color: #374151;
+        transition: background 0.1s;
+      }
+      .multi-check-item:hover {
+        background: #f5effb;
+      }
+      .multi-check-item input[type="checkbox"] {
+        accent-color: #662d91;
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      /* Persian datepicker override */
+      .datepicker-plot-area {
+        font-family: "Vazirmatn", sans-serif !important;
+        direction: rtl;
+      }
+      .pdp-header {
+        direction: rtl !important;
+      }
+      @media (max-width: 640px) {
+        .meta-row {
+          grid-template-columns: 1fr 1fr !important;
+        }
+        .score-cards-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+        .notes-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+        .likert-btn {
+          width: 30px;
+          height: 30px;
+          font-size: 12px;
+        }
+      }
+      @media (max-width: 420px) {
+        .meta-row {
+          grid-template-columns: 1fr !important;
+        }
+        .notes-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen py-6 px-3 sm:px-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-brand-border mb-6 overflow-hidden"
+      >
+        <div
+          class="bg-gradient-to-l from-brand to-brand-mid px-6 py-5 flex items-center gap-4"
+        >
+          <div
+            class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0"
+          >
+            <i data-lucide="building-2" class="text-white w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-white font-semibold text-base leading-tight">
+              فرم ارزیابی بازاریابی شعبه
+            </div>
+            <div class="text-white/75 text-sm mt-0.5">
+              بانک اقتصادنوین — مدیریت بازاریابی و امور مشتریان خرد
+            </div>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="meta-row grid grid-cols-3 gap-3 mb-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="map-pin" class="w-3 h-3"></i> نام شعبه</label
+              >
+              <input
+                type="text"
+                id="f_branch"
+                placeholder="مثلاً: شعبه ونک"
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="hash" class="w-3 h-3"></i> کد شعبه</label
+              >
+              <input
+                type="text"
+                id="f_code"
+                placeholder="۱۲۳۴"
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border"
+                oninput="this.value = toPersianDigits(this.value)"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="layers" class="w-3 h-3"></i> منطقه /
+                سرپرستی</label
+              >
+              <input
+                type="text"
+                id="f_region"
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border"
+              />
+            </div>
+          </div>
+          <div class="meta-row grid grid-cols-3 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="user" class="w-3 h-3"></i> نام رئیس شعبه</label
+              >
+              <input
+                type="text"
+                id="f_manager"
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="user-check" class="w-3 h-3"></i> نام
+                ارزیاب</label
+              >
+              <input
+                type="text"
+                id="f_evaluator"
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 flex items-center gap-1"
+                ><i data-lucide="calendar" class="w-3 h-3"></i> تاریخ
+                ارزیابی</label
+              >
+              <input
+                type="text"
+                id="f_date"
+                placeholder="انتخاب تاریخ..."
+                readonly
+                class="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-gray-50 hover:border-brand-border cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-4 flex-wrap">
+        <button
+          class="tab-btn rounded-xl px-4 py-2 text-sm font-medium flex items-center gap-1.5 active"
+          onclick="showTab('form')"
+        >
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i> فرم ارزیابی
+        </button>
+        <button
+          class="tab-btn rounded-xl px-4 py-2 text-sm font-medium flex items-center gap-1.5"
+          onclick="showTab('weights')"
+        >
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> تنظیم وزن‌ها
+        </button>
+        <button
+          class="tab-btn rounded-xl px-4 py-2 text-sm font-medium flex items-center gap-1.5"
+          onclick="showTab('results')"
+        >
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> نتایج و نمودار
+        </button>
+      </div>
+
+      <!-- TAB FORM -->
+      <div id="tab-form">
+        <div id="sections-container" class="space-y-3 mb-3"></div>
+
+        <!-- Opportunities -->
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-brand-border mb-3 overflow-hidden"
+        >
+          <button
+            onclick="toggleSection('opp')"
+            class="w-full flex items-center justify-between px-5 py-3.5 bg-brand-light hover:bg-purple-50 transition-colors"
+          >
+            <div class="flex items-center gap-2.5">
+              <div
+                class="w-8 h-8 rounded-lg bg-brand flex items-center justify-center"
+              >
+                <i data-lucide="star" class="text-white w-4 h-4"></i>
+              </div>
+              <span class="text-sm font-medium text-brand"
+                >جدول فرصت‌های منطقه</span
+              >
+            </div>
+            <i
+              data-lucide="chevron-up"
+              class="text-brand w-4 h-4 transition-transform"
+              id="chev-opp"
+            ></i>
+          </button>
+          <div class="section-body" id="body-opp" style="max-height: 600px">
+            <div class="p-4 overflow-x-auto">
+              <table
+                class="w-full text-xs border-collapse"
+                style="min-width: 520px"
+              >
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th
+                      class="border border-gray-100 px-3 py-2 text-right text-gray-500 font-medium"
+                      style="width: 26%"
+                    >
+                      نام شرکت / سازمان
+                    </th>
+                    <th
+                      class="border border-gray-100 px-2 py-2 text-center text-gray-500 font-medium"
+                      style="width: 10%"
+                    >
+                      تعداد کارکنان
+                    </th>
+                    <th
+                      class="border border-gray-100 px-3 py-2 text-right text-gray-500 font-medium"
+                      style="width: 30%"
+                    >
+                      نوع فرصت
+                    </th>
+                    <th
+                      class="border border-gray-100 px-3 py-2 text-right text-gray-500 font-medium"
+                      style="width: 18%"
+                    >
+                      مسئول پیگیری
+                    </th>
+                    <th
+                      class="border border-gray-100 px-3 py-2 text-right text-gray-500 font-medium"
+                    >
+                      وضعیت
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="opp-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-brand-border mb-3 overflow-hidden"
+        >
+          <button
+            onclick="toggleSection('notes')"
+            class="w-full flex items-center justify-between px-5 py-3.5 bg-brand-light hover:bg-purple-50 transition-colors"
+          >
+            <div class="flex items-center gap-2.5">
+              <div
+                class="w-8 h-8 rounded-lg bg-brand-mid flex items-center justify-center"
+              >
+                <i data-lucide="pencil-line" class="text-white w-4 h-4"></i>
+              </div>
+              <span class="text-sm font-medium text-brand"
+                >جمع‌بندی ارزیاب</span
+              >
+            </div>
+            <i
+              data-lucide="chevron-up"
+              class="text-brand w-4 h-4 transition-transform"
+              id="chev-notes"
+            ></i>
+          </button>
+          <div class="section-body" id="body-notes" style="max-height: 500px">
+            <div class="notes-grid grid grid-cols-2 gap-3 p-4">
+              <div>
+                <label class="text-xs text-gray-500 mb-1.5 block"
+                  >نقاط قوت شعبه</label
+                >
+                <textarea
+                  id="note_strength"
+                  placeholder="..."
+                  class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-800 bg-gray-50 resize-y min-h-[80px] hover:border-brand-border"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500 mb-1.5 block"
+                  >نقاط قابل بهبود</label
+                >
+                <textarea
+                  id="note_improve"
+                  placeholder="..."
+                  class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-800 bg-gray-50 resize-y min-h-[80px] hover:border-brand-border"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500 mb-1.5 block"
+                  >مهم‌ترین فرصت‌های بازار منطقه</label
+                >
+                <textarea
+                  id="note_opp"
+                  placeholder="..."
+                  class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-800 bg-gray-50 resize-y min-h-[80px] hover:border-brand-border"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500 mb-1.5 block"
+                  >درخواست‌ها و نیازهای شعبه</label
+                >
+                <textarea
+                  id="note_needs"
+                  placeholder="..."
+                  class="w-full border border-gray-200 rounded-lg p-2.5 text-sm text-gray-800 bg-gray-50 resize-y min-h-[80px] hover:border-brand-border"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 flex-wrap mb-4">
+          <button
+            onclick="exportCSV()"
+            class="flex items-center gap-2 bg-brand hover:bg-brand-dark text-white rounded-xl px-5 py-2.5 text-sm font-medium transition-colors shadow-sm"
+          >
+            <i data-lucide="download" class="w-4 h-4"></i> دریافت فایل CSV
+          </button>
+          <button
+            onclick="showTab('results')"
+            class="flex items-center gap-2 bg-white hover:bg-brand-light text-brand border border-brand-border rounded-xl px-5 py-2.5 text-sm font-medium transition-colors"
+          >
+            <i data-lucide="bar-chart-2" class="w-4 h-4"></i> مشاهده نتایج
+          </button>
+          <button
+            onclick="resetForm()"
+            class="flex items-center gap-2 bg-white hover:bg-red-50 text-gray-500 hover:text-red-600 border border-gray-200 rounded-xl px-5 py-2.5 text-sm font-medium transition-colors"
+          >
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> پاک کردن فرم
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB WEIGHTS -->
+      <div id="tab-weights" class="hidden">
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-brand-border p-5 mb-4"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2 text-brand font-medium text-sm">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> تنظیم وزن
+              بخش‌ها و معیارها
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-500">جمع وزن بخش‌ها:</span>
+              <span
+                id="total-section-weight"
+                class="text-sm font-semibold text-brand"
+                >۱۰۰</span
+              >
+              <button
+                onclick=""
+                class="text-xs bg-brand-light text-brand border border-brand-border rounded-lg px-3 py-1.5 hover:bg-purple-100 transition-colors flex items-center gap-1"
+              >
+                <i data-lucide="equal" class="w-3 h-3"></i> توزیع مساوی
+              </button>
+            </div>
+          </div>
+          <div id="weights-container" class="space-y-3"></div>
+          <div
+            class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 flex items-start gap-2"
+          >
+            <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+            <span
+              >جمع وزن بخش‌ها باید ۱۰۰ باشد. وزن معیارهای درون هر بخش نیز باید
+              جمعاً ۱۰۰ شوند. فرمول: امتیاز بخش = (Σ امتیاز لیکرت × وزن معیار) ÷
+              (Σ وزن‌ها) ÷ ۵ × وزن بخش</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB RESULTS -->
+      <div id="tab-results" class="hidden">
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-brand-border p-5 mb-4"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2 text-brand font-medium text-sm">
+              <i data-lucide="award" class="w-4 h-4"></i> امتیاز نهایی شعبه
+            </div>
+            <span
+              id="rank-badge-top"
+              class="text-sm font-medium px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-200"
+              >— / ۱۰۰</span
+            >
+          </div>
+          <div
+            class="score-cards-grid grid grid-cols-4 gap-2 mb-5"
+            id="score-grid"
+          ></div>
+          <div class="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
+            <div
+              class="rank-bar-fill h-full rounded-full bg-brand"
+              id="rank-bar"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div class="flex justify-between text-xs text-gray-400 mb-6">
+            <span id="rank-label-text">هنوز ارزیابی انجام نشده</span
+            ><span>۱۰۰</span>
+          </div>
+          <div class="flex justify-center">
+            <div
+              style="
+                position: relative;
+                width: 100%;
+                max-width: 460px;
+                height: 360px;
+              "
+            >
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2 mb-6" id="result-detail"></div>
+      </div>
+    </div>
+    <div
+      id="toast"
+      class="toast fixed bottom-6 left-1/2 -translate-x-1/2 bg-green-700 text-white px-5 py-2.5 rounded-xl text-sm z-50 opacity-0 pointer-events-none shadow-lg"
+      dir="rtl"
+    ></div>
+
+    <script>
+      // ── DATA ─────────────────────────────────────────────────────
+      const SECTIONS = [
+        {
+          id: "s1",
+          icon: "map",
+          title: "شناخت اهداف، بازار و ظرفیت منطقه",
+          sectionWeight: 20,
+          questions: [
+            { q: "برنامه عملیاتی شعبه تکمیل شده است؟", w: 15 },
+            { q: "همکاران شعبه به اهداف شعبه تسلط دارند؟", w: 12 },
+            {
+              q: "همکاران شعبه از وضعیت عملکرد شعبه در کارنامه و نسبت به سایر شعب آگاهی دارند؟",
+              w: 12,
+            },
+            { q: "نقشه کسب‌وکارهای منطقه تهیه شده است؟", w: 8 },
+            { q: "شرکت‌های بزرگ منطقه شناسایی شده‌اند؟", w: 10 },
+            { q: "مراکز تجاری و صنفی منطقه شناسایی شده‌اند؟", w: 10 },
+            { q: "کارفرمایان پرداخت حقوق شناسایی شده‌اند؟", w: 5 },
+            { q: "فرصت‌های جذب منابع و تسهیلات فهرست شده است؟", w: 10 },
+            {
+              q: "از بانک‌های اطلاعاتی آنلاین کسب‌وکارها (لینکا، کتاب اول و...) به صورت فعال استفاده شده است؟",
+              w: 10,
+            },
+            {
+              q: "پتانسیل رشد منطقه (پروژه‌های عمرانی، مراکز جدید تجاری، تغییر بافت جمعیتی و...) شناسایی شده است؟",
+              w: 8,
+            },
+          ],
+        },
+        {
+          id: "s2",
+          icon: "swords",
+          title: "تحلیل رقبا",
+          sectionWeight: 8,
+          questions: [
+            { q: "تعداد شعب رقبا در منطقه مشخص شده است؟", w: 25 },
+            { q: "محصولات ویژه رقبا شناسایی شده است؟", w: 25 },
+            { q: "نرخ‌های رقبا بررسی شده است؟", w: 25 },
+            { q: "نقاط قوت و ضعف رقبا استخراج شده است؟", w: 25 },
+          ],
+        },
+        {
+          id: "s3",
+          icon: "users",
+          title: "مشتریان شعبه",
+          sectionWeight: 18,
+          questions: [
+            {
+              q: "رئیس شعبه تعداد مشتریان حقیقی و حقوقی شعبه را می‌داند؟",
+              w: 10,
+            },
+            { q: "شعبه ریسک تمرکز مشتریان شرکتی ندارد؟", w: 15 },
+            {
+              q: "نسبت مشتریان غیرفعال حقیقی و حقوقی به کل مشتریان وضعیت استانداردی دارد؟",
+              w: 15,
+            },
+            { q: "رئیس شعبه از نسبت مشتریان رویگردان شعبه مطلع است؟", w: 10 },
+            { q: "۳۰ مشتری برتر شعبه از منظر منابع شناسایی شده‌اند؟", w: 15 },
+            { q: "برنامه نگهداری مشتریان ویژه وجود دارد؟", w: 15 },
+            {
+              q: "رئیس شعبه به‌طور منظم با مشتریان ویژه تماس مستقیم (حضوری یا تلفنی) دارد؟",
+              w: 10,
+            },
+            {
+              q: "برنامه‌ای برای بازگشت مشتریان غیرفعال (تماس، پیگیری، ارائه پیشنهاد) وجود دارد؟",
+              w: 10,
+            },
+          ],
+        },
+        {
+          id: "s4",
+          icon: "megaphone",
+          title: "فعالیت‌های بازاریابی",
+          sectionWeight: 20,
+          questions: [
+            { q: "فهرست مشتریان هدف برنامه بازاریابی مشخص شده است؟", w: 15 },
+            {
+              q: "تیم بازاریابی شعبه (برای هر دو گروه مشتریان حقیقی و حقوقی) تعیین شده و برنامه مشخصی دارند؟",
+              w: 20,
+            },
+            { q: "حجم برنامه بازاریابی شعبه متناسب با ظرفیت شعبه است؟", w: 15 },
+            { q: "شعبه برنامه خلاقانه در حوزه بازاریابی داشته است؟", w: 20 },
+            { q: "برنامه فعال بازاریابی درون‌شعبه‌ای تدوین شده است؟", w: 15 },
+            {
+              q: "برنامه بازاریابی شعبه با سرپرستی هماهنگ و به اشتراک گذاشته شده است؟",
+              w: 15,
+            },
+          ],
+        },
+        {
+          id: "s5",
+          icon: "sparkles",
+          title: "شواهد فیزیکی",
+          sectionWeight: 8,
+          questions: [
+            { q: "آمادگی تشریفاتی شعبه در وضعیت مناسبی قرار دارد؟", w: 15 },
+            { q: "نظافت شعبه مناسب است؟", w: 20 },
+            { q: "تابلوها و اقلام تبلیغاتی به‌روز است؟", w: 10 },
+            { q: "زمان انتظار مشتری کنترل می‌شود؟", w: 15 },
+            { q: "نظم و انضباط و آراستگی محیط شعبه مناسب است؟", w: 20 },
+            { q: "تجهیزات و امکانات شعبه در وضعیت مناسبی قرار دارد؟", w: 20 },
+          ],
+        },
+        {
+          id: "s6",
+          icon: "users-round",
+          title: "همکاران شعبه",
+          sectionWeight: 12,
+          questions: [
+            {
+              q: "همکاران شعبه در زمینه بازاریابی آموزش لازم را دیده‌اند؟",
+              w: 10,
+            },
+            {
+              q: "همکاران شعبه از ظرفیت‌ها و مزیت‌های بانک مطلع هستند؟",
+              w: 10,
+            },
+            {
+              q: "همکاران شعبه از محصولات و خدمات بانک آگاهی کافی دارند؟",
+              w: 10,
+            },
+            {
+              q: "شناخت همکاران از محصولات هدف بانک (آساوام، محصولات پلتفرمی، تسهیلات کارکنان و...) مطلوب است؟",
+              w: 12,
+            },
+            {
+              q: "همکاران شعبه محصولات و خدمات شرکت‌های تابعه بانک را می‌شناسند؟",
+              w: 10,
+            },
+            {
+              q: "مشارکت همکاران شعبه در فعالیت‌های بازاریابی (تیم بازاریابی) مناسب است؟",
+              w: 12,
+            },
+            { q: "وضعیت رفتار همکاران شعبه با مشتریان مناسب است؟", w: 12 },
+            { q: "پوشش ظاهری همکاران شعبه مناسب است؟", w: 8 },
+            {
+              q: "همکاران شعبه به صورت خودکنترلی به مدیریت صف مشتریان توجه می‌کنند؟",
+              w: 8,
+            },
+            { q: "در ماه گذشته شکایت وارد نداشته است؟", w: 8 },
+          ],
+        },
+        {
+          id: "s7",
+          icon: "smartphone",
+          title: "بانکداری دیجیتال",
+          sectionWeight: 14,
+          questions: [
+            {
+              q: "تعداد و درصد مشتریان فعال در همراه‌نوین یا اینترنت‌بانک مشخص شده است؟",
+              w: 20,
+            },
+            {
+              q: "برنامه‌ای برای فعال‌سازی مشتریان غیرفعال در کانال‌های دیجیتال وجود دارد؟",
+              w: 25,
+            },
+            {
+              q: "کارکنان شعبه برای معرفی خدمات دیجیتال جدید (نئون بانک و...) آموزش دیده‌اند؟",
+              w: 20,
+            },
+            {
+              q: "نسبت به تعداد پایانه‌های فروشگاهی و درگاه‌های اینترنتی شعبه آگاهی وجود دارد؟",
+              w: 15,
+            },
+            {
+              q: "برای نصب پایانه‌های فروشگاهی و درگاه‌های اینترنتی برنامه مدونی وجود دارد؟",
+              w: 20,
+            },
+          ],
+        },
+      ];
+
+      const SECTION_NUMS = ["۱", "۲", "۳", "۴", "۵", "۶", "۷"];
+      const OPP_TYPES = [
+        "منابع",
+        "حقوق و دستمزد",
+        "تسهیلات",
+        "ضمانت‌نامه",
+        "ارزی",
+        "SCF",
+        "سایر",
+      ];
+
+      const answers = {};
+      let radarChart = null;
+
+      // ── UTILS ────────────────────────────────────────────────────
+      function toPersianDigits(str) {
+        if (str === null || str === undefined) return str;
+        return String(str).replace(/[0-9]/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+      }
+      function toLatinDigits(str) {
+        if (!str) return str;
+        return String(str).replace(
+          /[۰-۹]/g,
+          (d) => d.charCodeAt(0) - "۰".charCodeAt(0),
+        );
+      }
+      function pNum(n, dec = 1) {
+        if (n === null || n === undefined || isNaN(n)) return "—";
+        const r = dec === 0 ? Math.round(n) : parseFloat(n.toFixed(dec));
+        return toPersianDigits(String(r));
+      }
+      function getSectionWeights() {
+        return SECTIONS.map((sec) => {
+          const el = document.getElementById("sw-" + sec.id);
+          return el ? parseFloat(el.value) || 0 : sec.sectionWeight;
+        });
+      }
+      function getQuestionWeight(secId, qIdx) {
+        const el = document.getElementById("qw-" + secId + "-" + qIdx);
+        return el
+          ? parseFloat(el.value) || 0
+          : SECTIONS.find((s) => s.id === secId).questions[qIdx].w;
+      }
+      function computeSectionScore(sec, sectionWeight) {
+        let ws = 0,
+          tw = 0;
+        sec.questions.forEach((q, i) => {
+          const val = answers[sec.id + "_" + i] || 0;
+          const w = getQuestionWeight(sec.id, i);
+          ws += val * w;
+          tw += w;
+        });
+        if (tw === 0) return 0;
+        return (ws / tw / 5) * sectionWeight;
+      }
+      function computeAllScores() {
+        const sw = getSectionWeights();
+        let total = 0;
+        const sectionScores = SECTIONS.map((sec, si) => {
+          const score = computeSectionScore(sec, sw[si]);
+          total += score;
+          return score;
+        });
+        return { sectionScores, total };
+      }
+
+      // ── BUILD SECTIONS ────────────────────────────────────────────
+      function buildSections() {
+        const container = document.getElementById("sections-container");
+        SECTIONS.forEach((sec, si) => {
+          const div = document.createElement("div");
+          div.className =
+            "bg-white rounded-2xl shadow-sm border border-brand-border overflow-hidden";
+          div.innerHTML = `
+      <button onclick="toggleSection('${sec.id}')" class="w-full flex items-center justify-between px-5 py-3.5 bg-brand-light hover:bg-purple-50 transition-colors">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-brand flex items-center justify-center flex-shrink-0">
+            <i data-lucide="${sec.icon}" class="text-white w-4 h-4"></i>
+          </div>
+          <span class="text-sm font-medium text-brand">${SECTION_NUMS[si]}. ${sec.title}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-white text-brand border border-brand-border" id="badge-${sec.id}">—</span>
+          <i data-lucide="chevron-up" class="text-brand w-4 h-4 transition-transform" id="chev-${sec.id}"></i>
+        </div>
+      </button>
+      <div class="section-body" id="body-${sec.id}" style="max-height:3000px">
+        <div class="eval-table-wrap">
+          <table class="eval-table w-full text-xs border-collapse">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="border-b border-gray-100 px-3 py-2.5 text-center text-gray-400 font-medium w-8">#</th>
+                <th class="border-b border-gray-100 px-4 py-2.5 text-right text-gray-500 font-medium">معیار ارزیابی</th>
+                <th class="border-b border-gray-100 px-3 py-2.5 text-center text-gray-500 font-medium" style="min-width:196px">امتیاز (۱ تا ۵)</th>
+                <th class="border-b border-gray-100 px-3 py-2.5 text-center text-gray-500 font-medium w-20">امتیاز کسب‌شده</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sec.questions
+                .map(
+                  (q, i) => `
+              <tr class="hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
+                <td class="px-3 py-3 text-center text-gray-300 text-xs">${toPersianDigits(i + 1)}</td>
+                <td class="px-4 py-3 text-gray-700 leading-relaxed text-xs sm:text-[13px]">${q.q}</td>
+                <td class="px-3 py-3">
+                  <div class="flex gap-1 justify-center">
+                    ${[1, 2, 3, 4, 5].map((v) => `<button class="likert-btn" onclick="setAnswer('${sec.id}',${i},${v})" id="lk-${sec.id}-${i}-${v}">${toPersianDigits(v)}</button>`).join("")}
+                  </div>
+                </td>
+                <td class="px-3 py-3 text-center font-medium text-gray-700 text-xs" id="earn-${sec.id}-${i}">—</td>
+              </tr>`,
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+        <div class="flex justify-end items-center gap-1 px-5 py-2.5 bg-brand-light border-t border-brand-border text-xs text-brand">
+          امتیاز بخش: <strong id="sum-${sec.id}">—</strong>
+        </div>
+      </div>`;
+          container.appendChild(div);
+        });
+      }
+
+      // ── OPP TABLE (multi-select) ──────────────────────────────────
+      function buildOppTable() {
+        const tbody = document.getElementById("opp-tbody");
+        for (let r = 0; r < 5; r++) {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50";
+          const checkboxes = OPP_TYPES.map(
+            (t, ti) => `
+      <label class="multi-check-item">
+        <input type="checkbox" id="opp_type_${r}_${ti}" value="${t}" onchange="updateOppBtn(${r})"/>
+        ${t}
+      </label>`,
+          ).join("");
+          tr.innerHTML = `
+      <td class="border-b border-gray-100 px-3 py-2">
+        <input type="text" placeholder="نام شرکت یا سازمان" id="opp_name_${r}"
+          style="width:100%;background:transparent;font-size:11px;color:#374151;border:none;outline:none;font-family:Vazirmatn,sans-serif;"/>
+      </td>
+      <td class="border-b border-gray-100 px-2 py-2 text-center">
+        <input type="text" inputmode="numeric" placeholder="—" id="opp_count_${r}"
+          style="width:52px;background:transparent;font-size:11px;color:#374151;border:none;outline:none;text-align:center;font-family:Vazirmatn,sans-serif;"
+          oninput="this.value=toPersianDigits(this.value)"/>
+      </td>
+      <td class="border-b border-gray-100 px-2 py-1.5">
+        <div class="multi-check-wrap" id="opp_wrap_${r}">
+          <button type="button" class="multi-check-btn" onclick="toggleOppDD(${r}, event)" id="opp_btn_${r}">
+            <span id="opp_btn_text_${r}" style="overflow:hidden;text-overflow:ellipsis;flex:1;">انتخاب کنید...</span>
+            <i data-lucide="chevron-down" style="width:12px;height:12px;flex-shrink:0;stroke:#9ca3af;"></i>
+          </button>
+          <div class="multi-check-dropdown" id="opp_dd_${r}">${checkboxes}</div>
+        </div>
+      </td>
+      <td class="border-b border-gray-100 px-3 py-2">
+        <input type="text" placeholder="نام همکار" id="opp_resp_${r}"
+          style="width:100%;background:transparent;font-size:11px;color:#374151;border:none;outline:none;font-family:Vazirmatn,sans-serif;"/>
+      </td>
+      <td class="border-b border-gray-100 px-3 py-2">
+        <input type="text" placeholder="وضعیت" id="opp_status_${r}"
+          style="width:100%;background:transparent;font-size:11px;color:#374151;border:none;outline:none;font-family:Vazirmatn,sans-serif;"/>
+      </td>`;
+          tbody.appendChild(tr);
+        }
+      }
+      function toggleOppDD(r, e) {
+        e.stopPropagation();
+        const dd = document.getElementById("opp_dd_" + r);
+        const isOpen = dd.classList.contains("open");
+        document
+          .querySelectorAll(".multi-check-dropdown")
+          .forEach((d) => d.classList.remove("open"));
+        if (!isOpen) dd.classList.add("open");
+      }
+      function updateOppBtn(r) {
+        const sel = OPP_TYPES.filter((_, ti) => {
+          const cb = document.getElementById(`opp_type_${r}_${ti}`);
+          return cb && cb.checked;
+        });
+        document.getElementById("opp_btn_text_" + r).textContent = sel.length
+          ? sel.join("، ")
+          : "انتخاب کنید...";
+      }
+      function getOppTypes(r) {
+        return OPP_TYPES.filter((_, ti) => {
+          const cb = document.getElementById(`opp_type_${r}_${ti}`);
+          return cb && cb.checked;
+        }).join(" / ");
+      }
+      document.addEventListener("click", () => {
+        document
+          .querySelectorAll(".multi-check-dropdown")
+          .forEach((d) => d.classList.remove("open"));
+      });
+
+      // ── SCORE GRID ────────────────────────────────────────────────
+      function buildScoreGrid() {
+        const grid = document.getElementById("score-grid");
+        SECTIONS.forEach((sec) => {
+          const d = document.createElement("div");
+          d.className =
+            "bg-brand-light border border-brand-border rounded-xl p-3 text-center";
+          const short =
+            sec.title.length > 10
+              ? sec.title.substring(0, 10) + "…"
+              : sec.title;
+          d.innerHTML = `<div class="text-xs text-gray-500 mb-1 leading-tight">${short}</div><div class="text-xl font-semibold text-brand" id="sc-${sec.id}">—</div>`;
+          grid.appendChild(d);
+        });
+        const dt = document.createElement("div");
+        dt.className =
+          "bg-brand border border-brand-dark rounded-xl p-3 text-center";
+        dt.innerHTML = `<div class="text-xs text-white/80 mb-1">امتیاز کل</div><div class="text-xl font-semibold text-white" id="sc-total">—</div>`;
+        grid.appendChild(dt);
+      }
+
+      // ── WEIGHTS PANEL ─────────────────────────────────────────────
+      function buildWeightsPanel() {
+        const container = document.getElementById("weights-container");
+        SECTIONS.forEach((sec, si) => {
+          const div = document.createElement("div");
+          div.className =
+            "border border-brand-border rounded-xl overflow-hidden";
+          div.innerHTML = `
+      <button onclick="toggleSection('wgrp-${sec.id}')" class="w-full flex items-center justify-between px-4 py-2.5 bg-brand-light hover:bg-purple-50 transition-colors">
+        <div class="flex items-center gap-2">
+          <i data-lucide="${sec.icon}" class="text-brand w-4 h-4"></i>
+          <span class="text-sm font-medium text-brand">${SECTION_NUMS[si]}. ${sec.title}</span>
+        </div>
+        <div class="flex items-center gap-3" onclick="event.stopPropagation()">
+          <span class="text-xs text-gray-500">وزن بخش:</span>
+          <input type="number" id="sw-${sec.id}" value="${sec.sectionWeight}" readonly min="0" max="100" step="1"
+            class="weight-input" oninput="onWeightChange()"/>
+          <i data-lucide="chevron-up" class="text-brand w-4 h-4 transition-transform pointer-events-none" id="chev-wgrp-${sec.id}"></i>
+        </div>
+      </button>
+      <div class="section-body" id="body-wgrp-${sec.id}" style="max-height:2000px">
+        <table class="w-full text-xs border-collapse">
+          <thead><tr class="bg-gray-50">
+            <th class="border-b border-gray-100 px-4 py-2 text-right text-gray-500 font-medium">معیار</th>
+            <th class="border-b border-gray-100 px-3 py-2 text-center text-gray-500 font-medium w-24">وزن معیار</th>
+          </tr></thead>
+          <tbody>
+            ${sec.questions
+              .map(
+                (q, i) => `
+            <tr class="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+              <td class="px-4 py-2.5 text-gray-700 leading-relaxed text-xs">${q.q}</td>
+              <td class="px-3 py-2.5 text-center">
+                <input type="number" id="qw-${sec.id}-${i}" value="${q.w}" readonly min="0" max="100" step="1"
+                  class="weight-input" oninput="onWeightChange()"/>
+              </td>
+            </tr>`,
+              )
+              .join("")}
+          </tbody>
+          <tfoot>
+            <tr class="bg-gray-50">
+              <td class="px-4 py-2 text-xs text-gray-500 font-medium">جمع وزن معیارها</td>
+              <td class="px-3 py-2 text-center text-xs font-semibold text-brand" id="qw-sum-${sec.id}">${toPersianDigits(100)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>`;
+          container.appendChild(div);
+        });
+      }
+
+      // ── INTERACTIONS ──────────────────────────────────────────────
+      function setAnswer(secId, qIdx, val) {
+        answers[secId + "_" + qIdx] = val;
+        [1, 2, 3, 4, 5].forEach((v) => {
+          const btn = document.getElementById(`lk-${secId}-${qIdx}-${v}`);
+          if (btn) btn.className = "likert-btn" + (v === val ? " a" + v : "");
+        });
+        document.getElementById(`earn-${secId}-${qIdx}`).textContent =
+          toPersianDigits(val);
+        updateScores();
+      }
+
+      function updateScores() {
+        const { sectionScores, total } = computeAllScores();
+        const sw = getSectionWeights();
+        SECTIONS.forEach((sec, si) => {
+          const s = sectionScores[si];
+          const badge = document.getElementById("badge-" + sec.id);
+          const sum = document.getElementById("sum-" + sec.id);
+          const sc = document.getElementById("sc-" + sec.id);
+          if (badge)
+            badge.textContent = pNum(s) + " / " + toPersianDigits(sw[si]);
+          if (sum) sum.textContent = pNum(s);
+          if (sc) sc.textContent = pNum(s);
+        });
+        const te = document.getElementById("sc-total");
+        if (te) te.textContent = pNum(total);
+
+        const pct = total;
+        const bar = document.getElementById("rank-bar");
+        bar.style.width = Math.min(pct, 100) + "%";
+        const badge = document.getElementById("rank-badge-top");
+        badge.textContent = pNum(total) + " / ۱۰۰";
+        badge.className = "text-sm font-medium px-3 py-1 rounded-full border";
+        let rankText = "",
+          barColor = "#662d91";
+        if (pct < 40) {
+          badge.classList.add("bg-red-50", "text-red-700", "border-red-200");
+          rankText = "🔴 ضعیف";
+          barColor = "#f87171";
+        } else if (pct < 60) {
+          badge.classList.add(
+            "bg-orange-50",
+            "text-orange-700",
+            "border-orange-200",
+          );
+          rankText = "🟠 نیازمند بهبود";
+          barColor = "#fb923c";
+        } else if (pct < 75) {
+          badge.classList.add(
+            "bg-yellow-50",
+            "text-yellow-700",
+            "border-yellow-200",
+          );
+          rankText = "🟡 قابل قبول";
+          barColor = "#facc15";
+        } else if (pct < 90) {
+          badge.classList.add(
+            "bg-green-50",
+            "text-green-700",
+            "border-green-200",
+          );
+          rankText = "🟢 خوب";
+          barColor = "#4ade80";
+        } else {
+          badge.classList.add(
+            "bg-brand-light",
+            "text-brand",
+            "border-brand-border",
+          );
+          rankText = "⭐ شعبه برتر بازاریابی";
+        }
+        bar.style.background = barColor;
+        document.getElementById("rank-label-text").textContent = rankText;
+        updateRadarChart(sectionScores);
+        updateResultDetail(sectionScores, total);
+      }
+
+      function updateRadarChart(sectionScores) {
+        const sw = getSectionWeights();
+        const labels = SECTIONS.map((s) =>
+          s.title.length > 12 ? s.title.substring(0, 12) + "…" : s.title,
+        );
+        const data = SECTIONS.map((sec, si) =>
+          sw[si] > 0
+            ? parseFloat(((sectionScores[si] / sw[si]) * 100).toFixed(1))
+            : 0,
+        );
+        if (radarChart) {
+          radarChart.data.datasets[0].data = data;
+          radarChart.update();
+          return;
+        }
+        const ctx = document.getElementById("radarChart").getContext("2d");
+        radarChart = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "امتیاز (از ۱۰۰)",
+                data,
+                backgroundColor: "rgba(102,45,145,0.15)",
+                borderColor: "#662d91",
+                borderWidth: 2,
+                pointBackgroundColor: "#662d91",
+                pointRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              r: {
+                min: 0,
+                max: 100,
+                ticks: {
+                  stepSize: 20,
+                  font: { size: 10, family: "Vazirmatn" },
+                  color: "#9ca3af",
+                },
+                pointLabels: {
+                  font: { size: 11, family: "Vazirmatn" },
+                  color: "#662d91",
+                },
+                grid: { color: "rgba(102,45,145,0.12)" },
+                angleLines: { color: "rgba(102,45,145,0.15)" },
+              },
+            },
+          },
+        });
+      }
+
+      function updateResultDetail(sectionScores, total) {
+        const container = document.getElementById("result-detail");
+        if (!container) return;
+        container.innerHTML = "";
+        const sw = getSectionWeights();
+        SECTIONS.forEach((sec, si) => {
+          const score = sectionScores[si],
+            swv = sw[si];
+          const pct = swv > 0 ? (score / swv) * 100 : 0;
+          let bc = "#662d91";
+          if (pct < 40) bc = "#f87171";
+          else if (pct < 60) bc = "#fb923c";
+          else if (pct < 75) bc = "#facc15";
+          else if (pct < 90) bc = "#4ade80";
+          const div = document.createElement("div");
+          div.className =
+            "bg-white rounded-xl border border-brand-border px-4 py-3";
+          div.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm text-gray-700">${SECTION_NUMS[si]}. ${sec.title}</span>
+        <span class="text-sm font-semibold text-brand">${pNum(score)} / ${toPersianDigits(swv)}</span>
+      </div>
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div style="height:100%;border-radius:9999px;background:${bc};width:${Math.min(pct, 100)}%;transition:width 0.4s;"></div>
+      </div>`;
+          container.appendChild(div);
+        });
+      }
+
+      function onWeightChange() {
+        SECTIONS.forEach((sec) => {
+          let sum = 0;
+          sec.questions.forEach((_, i) => {
+            sum += parseFloat(
+              document.getElementById(`qw-${sec.id}-${i}`)?.value || 0,
+            );
+          });
+          const el = document.getElementById("qw-sum-" + sec.id);
+          if (el) {
+            el.textContent = toPersianDigits(parseFloat(sum.toFixed(1)));
+            el.style.color = Math.abs(sum - 100) > 0.5 ? "#dc2626" : "#662d91";
+          }
+        });
+        let swSum = 0;
+        SECTIONS.forEach((sec) => {
+          swSum += parseFloat(
+            document.getElementById("sw-" + sec.id)?.value || 0,
+          );
+        });
+        const tswEl = document.getElementById("total-section-weight");
+        if (tswEl) {
+          tswEl.textContent = toPersianDigits(parseFloat(swSum.toFixed(1)));
+          tswEl.style.color =
+            Math.abs(swSum - 100) > 0.5 ? "#dc2626" : "#662d91";
+        }
+        updateScores();
+      }
+
+      function equalizeWeights() {
+        const n = SECTIONS.length,
+          each = parseFloat((100 / n).toFixed(2));
+        SECTIONS.forEach((sec, si) => {
+          const el = document.getElementById("sw-" + sec.id);
+          if (el)
+            el.value = si === n - 1 ? (100 - each * (n - 1)).toFixed(2) : each;
+          const qn = sec.questions.length,
+            qe = parseFloat((100 / qn).toFixed(2));
+          sec.questions.forEach((_, i) => {
+            const qel = document.getElementById(`qw-${sec.id}-${i}`);
+            if (qel)
+              qel.value = i === qn - 1 ? (100 - qe * (qn - 1)).toFixed(2) : qe;
+          });
+        });
+        onWeightChange();
+        showToast("وزن‌ها به صورت مساوی توزیع شدند");
+      }
+
+      function toggleSection(id) {
+        const body = document.getElementById("body-" + id);
+        const chev = document.getElementById("chev-" + id);
+        if (!body) return;
+        const collapsed = body.classList.toggle("collapsed");
+        if (chev)
+          chev.style.transform = collapsed ? "rotate(180deg)" : "rotate(0deg)";
+      }
+
+      function showTab(tab) {
+        ["form", "weights", "results"].forEach((t) => {
+          document
+            .getElementById("tab-" + t)
+            .classList.toggle("hidden", t !== tab);
+        });
+        document.querySelectorAll(".tab-btn").forEach((btn, i) => {
+          btn.classList.toggle(
+            "active",
+            ["form", "weights", "results"][i] === tab,
+          );
+        });
+        if (tab === "results") updateScores();
+      }
+
+      function resetForm() {
+        if (!confirm("آیا از پاک کردن تمام اطلاعات فرم اطمینان دارید؟")) return;
+        ["f_branch", "f_code", "f_region", "f_manager", "f_evaluator"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+          },
+        );
+        // reset datepicker
+        $("#f_date").val("");
+        try {
+          $("#f_date").data("datepicker") &&
+            $("#f_date").data("datepicker").setDate(null);
+        } catch (e) {}
+        Object.keys(answers).forEach((k) => delete answers[k]);
+        SECTIONS.forEach((sec) => {
+          sec.questions.forEach((_, i) => {
+            [1, 2, 3, 4, 5].forEach((v) => {
+              const b = document.getElementById(`lk-${sec.id}-${i}-${v}`);
+              if (b) b.className = "likert-btn";
+            });
+            const earn = document.getElementById(`earn-${sec.id}-${i}`);
+            if (earn) earn.textContent = "—";
+          });
+        });
+        ["note_strength", "note_improve", "note_opp", "note_needs"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+          },
+        );
+        for (let r = 0; r < 5; r++) {
+          ["name", "count", "resp", "status"].forEach((f) => {
+            const el = document.getElementById(`opp_${f}_${r}`);
+            if (el) el.value = "";
+          });
+          OPP_TYPES.forEach((_, ti) => {
+            const cb = document.getElementById(`opp_type_${r}_${ti}`);
+            if (cb) cb.checked = false;
+          });
+          updateOppBtn(r);
+        }
+        updateScores();
+        showToast("فرم پاک شد");
+      }
+
+      function exportCSV() {
+        const branch = document.getElementById("f_branch").value || "—";
+        const code =
+          toLatinDigits(document.getElementById("f_code").value) || "—";
+        const region = document.getElementById("f_region").value || "—";
+        const manager = document.getElementById("f_manager").value || "—";
+        const evaluator = document.getElementById("f_evaluator").value || "—";
+        const date =
+          toLatinDigits(document.getElementById("f_date").value) || "—";
+        const { sectionScores, total } = computeAllScores();
+        const sw = getSectionWeights();
+
+        const rows = [];
+        rows.push([
+          "نام شعبه",
+          "کد شعبه",
+          "منطقه",
+          "نام رئیس شعبه",
+          "نام ارزیاب",
+          "تاریخ",
+        ]);
+        rows.push([branch, code, region, manager, evaluator, date]);
+        rows.push([]);
+        rows.push([
+          "بخش",
+          "معیار",
+          "امتیاز لیکرت (1-5)",
+          "وزن معیار",
+          "امتیاز وزنی",
+        ]);
+        SECTIONS.forEach((sec, si) => {
+          sec.questions.forEach((q, i) => {
+            const val = answers[sec.id + "_" + i] || 0;
+            const w = getQuestionWeight(sec.id, i);
+            rows.push([
+              sec.title,
+              q.q,
+              val || "",
+              w,
+              val ? parseFloat((val * w).toFixed(2)) : 0,
+            ]);
+          });
+          rows.push([
+            sec.title + " — امتیاز بخش",
+            "",
+            "",
+            "وزن بخش: " + sw[si],
+            parseFloat(sectionScores[si].toFixed(2)),
+          ]);
+          rows.push([]);
+        });
+        rows.push([
+          "امتیاز کل (از 100)",
+          "",
+          "",
+          "",
+          parseFloat(total.toFixed(2)),
+        ]);
+        rows.push([]);
+        rows.push(["نقاط قوت", document.getElementById("note_strength").value]);
+        rows.push([
+          "نقاط قابل بهبود",
+          document.getElementById("note_improve").value,
+        ]);
+        rows.push([
+          "فرصت‌های بازار",
+          document.getElementById("note_opp").value,
+        ]);
+        rows.push([
+          "درخواست‌ها و نیازهای شعبه",
+          document.getElementById("note_needs").value,
+        ]);
+        rows.push([]);
+        rows.push(["جدول فرصت‌های منطقه"]);
+        rows.push([
+          "نام شرکت",
+          "تعداد کارکنان",
+          "نوع فرصت",
+          "مسئول پیگیری",
+          "وضعیت",
+        ]);
+        for (let r = 0; r < 5; r++) {
+          const n = document.getElementById("opp_name_" + r).value;
+          if (!n) continue;
+          rows.push([
+            n,
+            toLatinDigits(document.getElementById("opp_count_" + r).value),
+            getOppTypes(r),
+            document.getElementById("opp_resp_" + r).value,
+            document.getElementById("opp_status_" + r).value,
+          ]);
+        }
+        const csv =
+          "\uFEFF" +
+          rows
+            .map((r) =>
+              r
+                .map((c) => `"${String(c || "").replace(/"/g, '""')}"`)
+                .join(","),
+            )
+            .join("\r\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ارزیابی_شعبه_${branch}_${date}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("فایل CSV دریافت شد ✓");
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.style.opacity = "1";
+        setTimeout(() => {
+          t.style.opacity = "0";
+        }, 2500);
+      }
+
+      // ── INIT ──────────────────────────────────────────────────────
+      buildSections();
+      buildOppTable();
+      buildScoreGrid();
+      buildWeightsPanel();
+      updateScores();
+      lucide.createIcons();
+
+      // Persian Datepicker
+      $(function () {
+        $("#f_date").persianDatepicker({
+          format: "YYYY/MM/DD",
+          autoClose: true,
+          initialValue: false,
+          calendar: { persian: { locale: "fa" } },
+          onSelect: function () {
+            /* value set by plugin */
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
