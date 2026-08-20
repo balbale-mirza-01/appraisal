@@ -286,3 +286,23 @@ class EvaluationWorkflowTests(APITestCase):
         )
         self.assertEqual(submit_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("answers", submit_response.data)
+
+    def test_supervisor_sees_only_evaluators_from_assigned_region(self):
+        """Region supervisor should only see evaluators from their region when listing evaluators."""
+        self.client.force_authenticate(self.supervisor)
+        response = self.client.get(reverse("evaluator-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        evaluator_ids = [item["id"] for item in response.data]
+        # Supervisor should only see the evaluator assigned to their region (cls.evaluator)
+        self.assertIn(self.evaluator.id, evaluator_ids)
+        self.assertNotIn(self.other_evaluator.id, evaluator_ids)
+
+    def test_manager_sees_all_evaluators(self):
+        """Marketing manager should see all evaluators."""
+        self.client.force_authenticate(self.manager)
+        response = self.client.get(reverse("evaluator-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        evaluator_ids = [item["id"] for item in response.data]
+        # Manager should see all evaluators
+        self.assertIn(self.evaluator.id, evaluator_ids)
+        self.assertIn(self.other_evaluator.id, evaluator_ids)
