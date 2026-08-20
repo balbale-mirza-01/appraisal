@@ -1,15 +1,14 @@
-```
-# Python cache
+.venv/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Database
-db.sqlite3
-
-# Django specific
-*.log
-local_settings.py
+*.py[cod]
+backend/db.sqlite3
+backend/staticfiles/
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 .env
-```
+*.log
+.DS_Store
+Thumbs.db
