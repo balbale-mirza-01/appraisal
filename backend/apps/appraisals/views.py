@@ -178,9 +178,17 @@ class EvaluatorViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     search_fields = ("username", "first_name", "last_name", "employee_number")
 
     def get_queryset(self):
-        return User.objects.filter(
+        queryset = User.objects.filter(
             role=User.Role.EVALUATOR, is_active=True
         ).order_by("last_name", "first_name", "username")
+        user = self.request.user
+        if user.role == User.Role.REGION_SUPERVISOR:
+            queryset = queryset.filter(
+                evaluation_assignments__branch__region_id__in=supervised_region_ids(
+                    user
+                )
+            ).distinct()
+        return queryset
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
