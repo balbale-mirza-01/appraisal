@@ -19,6 +19,15 @@ class User(AbstractUser):
     role = models.CharField(
         "نقش", max_length=30, choices=Role.choices, default=Role.EVALUATOR
     )
+    region = models.ForeignKey(
+        "appraisals.Region",
+        verbose_name="منطقه",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="evaluators",
+        help_text="منطقه سازمانی کاربر؛ برای ارزیاب و سرپرست منطقه تکمیل می‌شود.",
+    )
 
     REQUIRED_FIELDS = ["email"]
 

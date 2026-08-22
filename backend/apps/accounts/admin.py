@@ -9,13 +9,13 @@ class AppUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (
             "اطلاعات سازمانی",
-            {"fields": ("employee_number", "mobile_number", "role")},
+            {"fields": ("employee_number", "mobile_number", "role", "region")},
         ),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
             "اطلاعات سازمانی",
-            {"fields": ("email", "employee_number", "mobile_number", "role")},
+            {"fields": ("email", "employee_number", "mobile_number", "role", "region")},
         ),
     )
     list_display = (
@@ -23,9 +23,10 @@ class AppUserAdmin(UserAdmin):
         "email",
         "employee_number",
         "role",
+        "region",
         "is_active",
         "is_staff",
     )
-    list_filter = ("role", "is_active", "is_staff")
+    list_filter = ("role", "region", "is_active", "is_staff")
     search_fields = ("username", "email", "employee_number", "first_name", "last_name")
 

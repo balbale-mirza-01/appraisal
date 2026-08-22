@@ -76,6 +76,11 @@ class Command(BaseCommand):
             supervisor=users["supervisor"],
             defaults={"is_active": True},
         )
+        for username in ("supervisor", "evaluator"):
+            user = users[username]
+            if user.region_id != region.id:
+                user.region = region
+                user.save(update_fields=["region"])
         template = EvaluationTemplate.objects.get(
             name=INITIAL_TEMPLATE_NAME, version=1
         )

@@ -184,10 +184,8 @@ class EvaluatorViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         user = self.request.user
         if user.role == User.Role.REGION_SUPERVISOR:
             queryset = queryset.filter(
-                evaluation_assignments__branch__region_id__in=supervised_region_ids(
-                    user
-                )
-            ).distinct()
+                region_id__in=supervised_region_ids(user)
+            )
         return queryset
 
 

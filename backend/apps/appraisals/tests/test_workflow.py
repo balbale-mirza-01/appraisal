@@ -54,6 +54,17 @@ class EvaluationWorkflowTests(APITestCase):
         cls.template = EvaluationTemplate.objects.get(version=1)
         cls.region = Region.objects.create(code="R1", name="منطقه یک")
         cls.other_region = Region.objects.create(code="R2", name="منطقه دو")
+        User.objects.filter(pk=cls.evaluator.pk).update(region=cls.region)
+        cls.evaluator.refresh_from_db()
+        User.objects.filter(pk=cls.other_evaluator.pk).update(region=cls.other_region)
+        cls.other_evaluator.refresh_from_db()
+        cls.unassigned_evaluator = User.objects.create_user(
+            username="newcomer",
+            email="newcomer@example.com",
+            password="StrongPass123!",
+            role=User.Role.EVALUATOR,
+            region=cls.region,
+        )
         cls.branch = Branch.objects.create(
             region=cls.region, code="B1", name="شعبه یک"
         )
@@ -293,9 +304,17 @@ class EvaluationWorkflowTests(APITestCase):
         response = self.client.get(reverse("evaluator-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         evaluator_ids = [item["id"] for item in response.data]
-        # Supervisor should only see the evaluator assigned to their region (cls.evaluator)
+        # Supervisor should only see evaluators whose region is in their supervised regions
         self.assertIn(self.evaluator.id, evaluator_ids)
         self.assertNotIn(self.other_evaluator.id, evaluator_ids)
+
+    def test_supervisor_sees_evaluator_with_no_prior_assignments(self):
+        """An evaluator with a set region must be visible even before any assignment exists."""
+        self.client.force_authenticate(self.supervisor)
+        response = self.client.get(reverse("evaluator-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        evaluator_ids = [item["id"] for item in response.data]
+        self.assertIn(self.unassigned_evaluator.id, evaluator_ids)
 
     def test_manager_sees_all_evaluators(self):
         """Marketing manager should see all evaluators."""

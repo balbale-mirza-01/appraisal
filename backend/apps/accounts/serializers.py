@@ -7,6 +7,7 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()
+    region_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -20,10 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "display_name",
             "role",
+            "region",
+            "region_name",
         )
 
     def get_display_name(self, obj):
         return obj.get_full_name() or obj.username
+
+    def get_region_name(self, obj):
+        return obj.region.name if obj.region else None
 
 
 class LoginSerializer(serializers.Serializer):
