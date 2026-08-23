@@ -2,40 +2,42 @@ services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: appraisal
-      POSTGRES_USER: appraisal
-      POSTGRES_PASSWORD: local-appraisal-password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U appraisal -d appraisal"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
 
   mailpit:
     image: axllent/mailpit:v1.27
-    ports:
-      - "8025:8025"
+    # Removed public port mapping for security.
+    # Access Mailpit UI via SSH tunnel if needed, or expose temporarily.
+    restart: unless-stopped
 
   backend:
     build: ./backend
     environment:
-      DJANGO_SECRET_KEY: local-docker-secret-change-before-production
-      DJANGO_DEBUG: "true"
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
-      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8080
-      POSTGRES_DB: appraisal
-      POSTGRES_USER: appraisal
-      POSTGRES_PASSWORD: local-appraisal-password
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
-      JWT_COOKIE_SECURE: "false"
-      FRONTEND_URL: http://localhost:8080
-      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
-      EMAIL_HOST: mailpit
-      EMAIL_PORT: "1025"
-      DEFAULT_FROM_EMAIL: noreply@appraisal.local
+      JWT_COOKIE_SECURE: "false" # Set to "true" later when you add HTTPS
+      FRONTEND_URL: ${FRONTEND_URL}
+      EMAIL_BACKEND: ${EMAIL_BACKEND}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
     depends_on:
       db:
         condition: service_healthy
@@ -45,6 +47,7 @@ services:
              gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     volumes:
       - static_files:/app/staticfiles
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
@@ -54,8 +57,8 @@ services:
       - backend
     volumes:
       - static_files:/srv/static:ro
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   static_files:
-
