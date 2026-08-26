@@ -2,6 +2,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
 import { useAuth } from "../auth";
+import { JalaliDatePicker } from "../components/JalaliDatePicker";
 import { Loading } from "../components/Loading";
 import { StatusBadge } from "../components/StatusBadge";
 import type { Assignment, Branch, Cycle, Paginated, User } from "../types";
@@ -24,6 +25,12 @@ export function AssignmentManagerPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Assignment | null>(null);
+  const [editForm, setEditForm] = useState({
+    evaluator: "",
+    due_date: "",
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -67,6 +74,37 @@ export function AssignmentManagerPage() {
       await load();
     } catch (exception) {
       setError(exception instanceof Error ? exception.message : "ثبت تخصیص ناموفق بود.");
+    }
+  }
+
+  function openEdit(assignment: Assignment) {
+    setEditing(assignment);
+    setEditForm({
+      evaluator: String(assignment.evaluator),
+      due_date: assignment.due_date,
+    });
+  }
+
+  async function submitEdit(event: FormEvent) {
+    event.preventDefault();
+    if (!editing) return;
+    setSavingEdit(true);
+    try {
+      await api<Assignment>(`/assignments/${editing.id}/`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          evaluator: Number(editForm.evaluator),
+          due_date: editForm.due_date,
+        }),
+      });
+      setEditing(null);
+      await load();
+    } catch (exception) {
+      setError(
+        exception instanceof Error ? exception.message : "ویرایش تخصیص ناموفق بود.",
+      );
+    } finally {
+      setSavingEdit(false);
     }
   }
 
@@ -132,10 +170,9 @@ export function AssignmentManagerPage() {
           </label>
           <label>
             مهلت انجام
-            <input
-              type="date"
+            <JalaliDatePicker
               value={form.due_date}
-              onChange={(event) => setForm({ ...form, due_date: event.target.value })}
+              onChange={(value) => setForm({ ...form, due_date: value })}
               required
             />
           </label>
@@ -153,6 +190,7 @@ export function AssignmentManagerPage() {
                 <th>دوره</th>
                 <th>مهلت</th>
                 <th>وضعیت</th>
+                <th>عملیات</th>
                 <th></th>
               </tr>
             </thead>
@@ -164,6 +202,17 @@ export function AssignmentManagerPage() {
                   <td>{assignment.cycle_title}</td>
                   <td>{formatDate(assignment.due_date)}</td>
                   <td><StatusBadge status={assignment.status} /></td>
+                  <td>
+                    {canEdit(assignment) && (
+                      <button
+                        type="button"
+                        className="button button-small button-secondary"
+                        onClick={() => openEdit(assignment)}
+                      >
+                        ویرایش
+                      </button>
+                    )}
+                  </td>
                   <td>
                     {assignment.evaluation_id && (
                       <Link
@@ -180,8 +229,65 @@ export function AssignmentManagerPage() {
           </table>
         </div>
       </section>
+      {editing && (
+        <div
+          className="modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setEditing(null);
+          }}
+        >
+          <form className="modal-card" onSubmit={submitEdit}>
+            <h3>ویرایش تخصیص</h3>
+            <p className="modal-caption">
+              {editing.branch_detail.name} — {editing.cycle_title}
+            </p>
+            <label>
+              ارزیاب
+              <select
+                value={editForm.evaluator}
+                onChange={(event) =>
+                  setEditForm({ ...editForm, evaluator: event.target.value })
+                }
+                required
+              >
+                <option value="">انتخاب ارزیاب</option>
+                {evaluators.map((evaluator) => (
+                  <option key={evaluator.id} value={evaluator.id}>
+                    {evaluator.display_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              مهلت انجام
+              <JalaliDatePicker
+                value={editForm.due_date}
+                onChange={(value) => setEditForm({ ...editForm, due_date: value })}
+                required
+              />
+            </label>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={() => setEditing(null)}
+              >
+                انصراف
+              </button>
+              <button className="button button-primary" disabled={savingEdit}>
+                {savingEdit ? "در حال ذخیره..." : "ذخیره تغییرات"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
+}
+
+function canEdit(assignment: Assignment) {
+  return assignment.status === "assigned" && !assignment.evaluation_id;
 }
 
 function formatDate(value: string) {
@@ -189,4 +295,3 @@ function formatDate(value: string) {
     new Date(`${value}T00:00:00`),
   );
 }
-

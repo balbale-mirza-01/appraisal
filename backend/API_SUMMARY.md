@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive summary of the backend APIs for the **Branch Evaluation System** (سامانه ارزیابی شعب). The backend is built using **Django REST Framework** and provides authentication, authorization, and full CRUD operations for managing branch evaluations, cycles, templates, and related entities.
+This document provides a comprehensive summary of the backend APIs for the **Branch Evaluation System** (سامانه ارزیابی بازاریابی شعب). The backend is built using **Django REST Framework** and provides authentication, authorization, and full CRUD operations for managing branch evaluations, cycles, templates, and related entities.
 
 ---
 
@@ -30,6 +30,7 @@ This document provides a comprehensive summary of the backend APIs for the **Bra
 ### User Roles
 
 The system defines four user roles:
+
 - `evaluator` (ارزیاب) - Performs branch evaluations
 - `region_supervisor` (سرپرست منطقه) - Supervises regions and reviews evaluations
 - `marketing_manager` (مدیر بازاریابی) - Manages cycles, assignments, and reviews
@@ -37,28 +38,32 @@ The system defines four user roles:
 
 ### Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/auth/csrf/` | Get CSRF token | No |
-| POST | `/api/auth/login/` | User login | No |
-| POST | `/api/auth/refresh/` | Refresh access token | No (uses refresh cookie) |
-| POST | `/api/auth/logout/` | User logout | No (uses refresh cookie) |
-| GET | `/api/auth/me/` | Get current user info | Yes |
-| POST | `/api/auth/change-password/` | Change password | Yes |
-| POST | `/api/auth/password-reset/request/` | Request password reset | No |
-| POST | `/api/auth/password-reset/confirm/` | Confirm password reset | No |
+| Method | Endpoint                            | Description            | Auth Required            |
+| ------ | ----------------------------------- | ---------------------- | ------------------------ |
+| GET    | `/api/auth/csrf/`                   | Get CSRF token         | No                       |
+| POST   | `/api/auth/login/`                  | User login             | No                       |
+| POST   | `/api/auth/refresh/`                | Refresh access token   | No (uses refresh cookie) |
+| POST   | `/api/auth/logout/`                 | User logout            | No (uses refresh cookie) |
+| GET    | `/api/auth/me/`                     | Get current user info  | Yes                      |
+| POST   | `/api/auth/change-password/`        | Change password        | Yes                      |
+| POST   | `/api/auth/password-reset/request/` | Request password reset | No                       |
+| POST   | `/api/auth/password-reset/confirm/` | Confirm password reset | No                       |
 
 ### Request/Response Examples
 
 #### Login
+
 **POST** `/api/auth/login/`
+
 ```json
 {
   "username": "user@example.com",
   "password": "securepassword"
 }
 ```
+
 **Response**:
+
 ```json
 {
   "access": "eyJ0eXAiOiJKV1QiLCJhbG...",
@@ -74,10 +79,13 @@ The system defines four user roles:
   }
 }
 ```
-*Note: Refresh token is set as an HTTP-only cookie.*
+
+_Note: Refresh token is set as an HTTP-only cookie._
 
 #### Get Current User
+
 **GET** `/api/auth/me/`
+
 ```json
 {
   "id": 1,
@@ -97,9 +105,9 @@ The system defines four user roles:
 
 ### 2.1 Health Check
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health/` | Health check endpoint |
+| Method | Endpoint       | Description           |
+| ------ | -------------- | --------------------- |
+| GET    | `/api/health/` | Health check endpoint |
 
 ---
 
@@ -108,12 +116,13 @@ The system defines four user roles:
 **ViewSet**: `RegionViewSet`  
 **Permissions**: Authenticated users (filtered by role)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/regions/` | List all active regions |
-| GET | `/api/regions/{id}/` | Get region details |
+| Method | Endpoint             | Description             |
+| ------ | -------------------- | ----------------------- |
+| GET    | `/api/regions/`      | List all active regions |
+| GET    | `/api/regions/{id}/` | Get region details      |
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -124,6 +133,7 @@ The system defines four user roles:
 ```
 
 **Notes**:
+
 - Region supervisors only see their assigned regions
 - Evaluators only see regions with their assigned branches
 
@@ -137,12 +147,13 @@ The system defines four user roles:
 **Search**: `name`, `code`, `manager_name`  
 **Ordering**: `name`, `code`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/branches/` | List all active branches |
-| GET | `/api/branches/{id}/` | Get branch details |
+| Method | Endpoint              | Description              |
+| ------ | --------------------- | ------------------------ |
+| GET    | `/api/branches/`      | List all active branches |
+| GET    | `/api/branches/{id}/` | Get branch details       |
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -161,13 +172,14 @@ The system defines four user roles:
 **ViewSet**: `TemplateViewSet`  
 **Permissions**: Read-only for authenticated users
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/templates/` | List all published templates |
-| GET | `/api/templates/{id}/` | Get template details |
-| GET | `/api/templates/current/` | Get latest published template |
+| Method | Endpoint                  | Description                   |
+| ------ | ------------------------- | ----------------------------- |
+| GET    | `/api/templates/`         | List all published templates  |
+| GET    | `/api/templates/{id}/`    | Get template details          |
+| GET    | `/api/templates/current/` | Get latest published template |
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -202,22 +214,24 @@ The system defines four user roles:
 ### 2.5 Cycles (دوره‌های ارزیابی)
 
 **ViewSet**: `CycleViewSet`  
-**Permissions**: 
+**Permissions**:
+
 - Read: All authenticated users (filtered by role)
 - Create/Update/Delete: Marketing Manager or Admin only  
-**Filtering**: `?status={status}&template={id}`  
-**Search**: `title`  
-**Ordering**: `start_date`, `end_date`, `title`
+  **Filtering**: `?status={status}&template={id}`  
+  **Search**: `title`  
+  **Ordering**: `start_date`, `end_date`, `title`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/cycles/` | List evaluation cycles |
-| POST | `/api/cycles/` | Create new cycle |
-| GET | `/api/cycles/{id}/` | Get cycle details |
-| PUT/PATCH | `/api/cycles/{id}/` | Update cycle |
-| DELETE | `/api/cycles/{id}/` | Delete cycle |
+| Method    | Endpoint            | Description            |
+| --------- | ------------------- | ---------------------- |
+| GET       | `/api/cycles/`      | List evaluation cycles |
+| POST      | `/api/cycles/`      | Create new cycle       |
+| GET       | `/api/cycles/{id}/` | Get cycle details      |
+| PUT/PATCH | `/api/cycles/{id}/` | Update cycle           |
+| DELETE    | `/api/cycles/{id}/` | Delete cycle           |
 
 **Request Example (Create)**:
+
 ```json
 {
   "title": "Q1 2024 Evaluation Cycle",
@@ -229,6 +243,7 @@ The system defines four user roles:
 ```
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -249,31 +264,33 @@ The system defines four user roles:
 **Permissions**: CanManageAssignments (Region Supervisor, Marketing Manager, Admin)  
 **Search**: `username`, `first_name`, `last_name`, `employee_number`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/evaluators/` | List all active evaluators |
+| Method | Endpoint           | Description                |
+| ------ | ------------------ | -------------------------- |
+| GET    | `/api/evaluators/` | List all active evaluators |
 
 ---
 
 ### 2.7 Assignments (تخصیص‌های ارزیابی)
 
 **ViewSet**: `AssignmentViewSet`  
-**Permissions**: 
+**Permissions**:
+
 - Read: All authenticated users (filtered by visibility rules)
 - Create/Update/Delete: CanManageAssignments only  
-**Filtering**: `?cycle={id}&branch={id}&evaluator={id}&status={status}`  
-**Search**: `branch__name`, `branch__code`, `evaluator__first_name`, etc.  
-**Ordering**: `due_date`, `created_at`, `status`
+  **Filtering**: `?cycle={id}&branch={id}&evaluator={id}&status={status}`  
+  **Search**: `branch__name`, `branch__code`, `evaluator__first_name`, etc.  
+  **Ordering**: `due_date`, `created_at`, `status`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/assignments/` | List assignments |
-| POST | `/api/assignments/` | Create assignment |
-| GET | `/api/assignments/{id}/` | Get assignment details |
-| PUT/PATCH | `/api/assignments/{id}/` | Update assignment |
-| DELETE | `/api/assignments/{id}/` | Delete assignment |
+| Method    | Endpoint                 | Description            |
+| --------- | ------------------------ | ---------------------- |
+| GET       | `/api/assignments/`      | List assignments       |
+| POST      | `/api/assignments/`      | Create assignment      |
+| GET       | `/api/assignments/{id}/` | Get assignment details |
+| PUT/PATCH | `/api/assignments/{id}/` | Update assignment      |
+| DELETE    | `/api/assignments/{id}/` | Delete assignment      |
 
 **Request Example (Create)**:
+
 ```json
 {
   "cycle": 1,
@@ -284,6 +301,7 @@ The system defines four user roles:
 ```
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -326,30 +344,32 @@ The system defines four user roles:
 ### 2.8 Evaluations (ارزیابی‌ها)
 
 **ViewSet**: `EvaluationViewSet`  
-**Permissions**: 
+**Permissions**:
+
 - Read: All authenticated users (filtered by visibility rules)
 - Create: Assigned evaluator only
 - Update/Delete: Assigned evaluator (only in DRAFT or RETURNED status)
 - Special actions: Role-based permissions  
-**Filtering**: `?status={status}&assignment__cycle={id}&assignment__branch={id}&assignment__branch__region={id}&assignment__evaluator={id}`  
-**Search**: `assignment__branch__name`, `assignment__branch__code`, etc.  
-**Ordering**: `evaluation_date`, `created_at`, `updated_at`, `total_score`, `status`
+  **Filtering**: `?status={status}&assignment__cycle={id}&assignment__branch={id}&assignment__branch__region={id}&assignment__evaluator={id}`  
+  **Search**: `assignment__branch__name`, `assignment__branch__code`, etc.  
+  **Ordering**: `evaluation_date`, `created_at`, `updated_at`, `total_score`, `status`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/evaluations/` | List evaluations |
-| POST | `/api/evaluations/` | Create evaluation |
-| GET | `/api/evaluations/{id}/` | Get evaluation details |
-| PUT/PATCH | `/api/evaluations/{id}/` | Update evaluation |
-| DELETE | `/api/evaluations/{id}/` | Delete evaluation |
-| POST | `/api/evaluations/{id}/submit/` | Submit evaluation |
-| POST | `/api/evaluations/{id}/approve/` | Approve evaluation |
-| POST | `/api/evaluations/{id}/return_for_correction/` | Return for correction |
-| POST | `/api/evaluations/{id}/recalculate/` | Recalculate scores (Admin/Manager only) |
-| POST | `/api/evaluations/{id}/reopen/` | Reopen evaluation (Admin/Manager only) |
-| GET | `/api/evaluations/{id}/export-xlsx/` | Export individual evaluation to Excel |
+| Method    | Endpoint                                       | Description                             |
+| --------- | ---------------------------------------------- | --------------------------------------- |
+| GET       | `/api/evaluations/`                            | List evaluations                        |
+| POST      | `/api/evaluations/`                            | Create evaluation                       |
+| GET       | `/api/evaluations/{id}/`                       | Get evaluation details                  |
+| PUT/PATCH | `/api/evaluations/{id}/`                       | Update evaluation                       |
+| DELETE    | `/api/evaluations/{id}/`                       | Delete evaluation                       |
+| POST      | `/api/evaluations/{id}/submit/`                | Submit evaluation                       |
+| POST      | `/api/evaluations/{id}/approve/`               | Approve evaluation                      |
+| POST      | `/api/evaluations/{id}/return_for_correction/` | Return for correction                   |
+| POST      | `/api/evaluations/{id}/recalculate/`           | Recalculate scores (Admin/Manager only) |
+| POST      | `/api/evaluations/{id}/reopen/`                | Reopen evaluation (Admin/Manager only)  |
+| GET       | `/api/evaluations/{id}/export-xlsx/`           | Export individual evaluation to Excel   |
 
 **Request Example (Create)**:
+
 ```json
 {
   "assignment": 1,
@@ -380,6 +400,7 @@ The system defines four user roles:
 ```
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -410,16 +431,16 @@ The system defines four user roles:
 - **Submit** (`POST /submit/`): Moves evaluation from DRAFT/RETURNED to SUBMITTED
 - **Approve** (`POST /approve/`): Manager/Supervisor approves evaluation
   ```json
-  {"comment": "Great work!"}
+  { "comment": "Great work!" }
   ```
 - **Return for Correction** (`POST /return_for_correction/`): Sends back to evaluator
   ```json
-  {"comment": "Please provide more details on section 3"}
+  { "comment": "Please provide more details on section 3" }
   ```
 - **Recalculate** (`POST /recalculate/`): Recalculates scores (Admin/Manager only)
 - **Reopen** (`POST /reopen/`): Reopens approved evaluation (Admin/Manager only)
   ```json
-  {"comment": "Reopening for additional review"}
+  { "comment": "Reopening for additional review" }
   ```
 
 ---
@@ -430,15 +451,16 @@ The system defines four user roles:
 **Permissions**: IsMarketingManagerOrAdmin only  
 **Filtering**: `?region={id}&supervisor={id}&is_active={boolean}`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/region-supervisors/` | List supervisor assignments |
-| POST | `/api/region-supervisors/` | Create assignment |
-| GET | `/api/region-supervisors/{id}/` | Get details |
-| PUT/PATCH | `/api/region-supervisors/{id}/` | Update assignment |
-| DELETE | `/api/region-supervisors/{id}/` | Delete assignment |
+| Method    | Endpoint                        | Description                 |
+| --------- | ------------------------------- | --------------------------- |
+| GET       | `/api/region-supervisors/`      | List supervisor assignments |
+| POST      | `/api/region-supervisors/`      | Create assignment           |
+| GET       | `/api/region-supervisors/{id}/` | Get details                 |
+| PUT/PATCH | `/api/region-supervisors/{id}/` | Update assignment           |
+| DELETE    | `/api/region-supervisors/{id}/` | Delete assignment           |
 
 **Response Example**:
+
 ```json
 {
   "id": 1,
@@ -467,11 +489,12 @@ The system defines four user roles:
 **View**: `DashboardView`  
 **Permissions**: IsAuthenticated
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/dashboard/` | Get dashboard statistics |
+| Method | Endpoint          | Description              |
+| ------ | ----------------- | ------------------------ |
+| GET    | `/api/dashboard/` | Get dashboard statistics |
 
 **Response Example**:
+
 ```json
 {
   "role": "evaluator",
@@ -492,6 +515,7 @@ The system defines four user roles:
 ```
 
 Dashboard data varies based on user role:
+
 - **Evaluators**: See personal workload, completion rate, action items
 - **Region Supervisors**: See regional statistics, evaluator workload
 - **Marketing Managers**: See active cycles, overall statistics
@@ -504,17 +528,19 @@ Dashboard data varies based on user role:
 **View**: `EvaluationReportExportView`  
 **Permissions**: IsAuthenticated (filtered by visibility)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/reports/evaluations.xlsx` | Export evaluation report to Excel |
+| Method | Endpoint                        | Description                       |
+| ------ | ------------------------------- | --------------------------------- |
+| GET    | `/api/reports/evaluations.xlsx` | Export evaluation report to Excel |
 
 **Query Parameters**:
+
 - `cycle`: Filter by cycle ID
 - `region`: Filter by region ID
 - `branch`: Filter by branch ID
 - `status`: Filter by evaluation status
 
 **Response**: Excel file download with multiple sheets:
+
 - Summary (خلاصه)
 - Regions (مناطق)
 - Branches (شعب)
@@ -548,16 +574,16 @@ Dashboard data varies based on user role:
 
 ### Role-Based Access
 
-| Feature | Evaluator | Region Supervisor | Marketing Manager | Admin |
-|---------|-----------|-------------------|-------------------|-------|
-| View own assignments | ✓ | ✓ | ✓ | ✓ |
-| Create evaluations | ✓ | ✗ | ✗ | ✗ |
-| Review regional evaluations | ✗ | ✓ | ✓ | ✓ |
-| Manage cycles | ✗ | ✗ | ✓ | ✓ |
-| Manage assignments | ✗ | ✓ | ✓ | ✓ |
-| Manage supervisor assignments | ✗ | ✗ | ✓ | ✓ |
-| Recalculate/Reopen evaluations | ✗ | ✗ | ✓ | ✓ |
-| System-wide statistics | ✗ | ✗ | ✓ | ✓ |
+| Feature                        | Evaluator | Region Supervisor | Marketing Manager | Admin |
+| ------------------------------ | --------- | ----------------- | ----------------- | ----- |
+| View own assignments           | ✓         | ✓                 | ✓                 | ✓     |
+| Create evaluations             | ✓         | ✗                 | ✗                 | ✗     |
+| Review regional evaluations    | ✗         | ✓                 | ✓                 | ✓     |
+| Manage cycles                  | ✗         | ✗                 | ✓                 | ✓     |
+| Manage assignments             | ✗         | ✓                 | ✓                 | ✓     |
+| Manage supervisor assignments  | ✗         | ✗                 | ✓                 | ✓     |
+| Recalculate/Reopen evaluations | ✗         | ✗                 | ✓                 | ✓     |
+| System-wide statistics         | ✗         | ✗                 | ✓                 | ✓     |
 
 ### Visibility Rules
 
@@ -570,6 +596,7 @@ Dashboard data varies based on user role:
 ## 5. Error Handling
 
 All endpoints return standard HTTP status codes:
+
 - `200 OK` - Successful request
 - `201 Created` - Resource created
 - `204 No Content` - Successful deletion
@@ -604,6 +631,7 @@ Error responses include descriptive messages in Persian (Farsi).
 ## 8. Key Business Logic
 
 ### Evaluation Workflow
+
 1. Admin/Manager creates a cycle with a published template
 2. Assignments are created linking evaluators to branches
 3. Evaluators create and submit evaluations
@@ -611,13 +639,16 @@ Error responses include descriptive messages in Persian (Farsi).
 5. Approved evaluations contribute to regional/national statistics
 
 ### Scoring System
+
 - Criteria scored 1-5
 - Weighted scores calculated per criterion
 - Section scores aggregated
 - Total score determines classification
 
 ### Classification Thresholds
+
 (Defined in services.py)
+
 - Based on total score percentage
 
 ---
@@ -625,6 +656,7 @@ Error responses include descriptive messages in Persian (Farsi).
 ## 9. File Exports
 
 Two types of Excel exports available:
+
 1. **Individual Evaluation** (`/api/evaluations/{id}/export-xlsx/`): Detailed single evaluation with all answers
 2. **Bulk Report** (`/api/reports/evaluations.xlsx`): Aggregated report with filtering options
 
@@ -633,6 +665,7 @@ Two types of Excel exports available:
 ## 10. Audit Trail
 
 All significant evaluation actions are logged in `AuditEvent`:
+
 - Evaluation creation
 - Submission
 - Approval/Return
@@ -642,4 +675,4 @@ All significant evaluation actions are logged in `AuditEvent`:
 
 ---
 
-*Document generated from source code analysis*
+_Document generated from source code analysis_

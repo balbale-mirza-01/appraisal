@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { api } from "../api";
 import { useAuth } from "../auth";
+import { JalaliDatePicker } from "../components/JalaliDatePicker";
 import { Loading } from "../components/Loading";
 import { StatusBadge } from "../components/StatusBadge";
 import type { Cycle, EvaluationTemplate } from "../types";
@@ -118,19 +119,18 @@ export function CycleManagerPage() {
           </label>
           <label>
             تاریخ شروع
-            <input
-              type="date"
+            <JalaliDatePicker
               value={form.start_date}
-              onChange={(event) => setForm({ ...form, start_date: event.target.value })}
+              onChange={(value) => setForm({ ...form, start_date: value })}
               required
             />
           </label>
           <label>
             تاریخ پایان
-            <input
-              type="date"
+            <JalaliDatePicker
               value={form.end_date}
-              onChange={(event) => setForm({ ...form, end_date: event.target.value })}
+              onChange={(value) => setForm({ ...form, end_date: value })}
+              minDate={form.start_date || undefined}
               required
             />
           </label>
@@ -201,4 +201,3 @@ function formatDate(value: string) {
     new Date(`${value}T00:00:00`),
   );
 }
-

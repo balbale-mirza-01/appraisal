@@ -6,9 +6,8 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const successMessage = (
-    location.state as { message?: string } | null
-  )?.message;
+  const successMessage = (location.state as { message?: string } | null)
+    ?.message;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,7 +21,9 @@ export function LoginPage() {
       await login(username, password);
       navigate("/");
     } catch (exception) {
-      setError(exception instanceof Error ? exception.message : "ورود ناموفق بود.");
+      setError(
+        exception instanceof Error ? exception.message : "ورود ناموفق بود.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -32,9 +33,11 @@ export function LoginPage() {
     <main className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
         <div className="brand-mark">EN</div>
-        <h1>ورود به سامانه ارزیابی شعب</h1>
+        <h1>ورود به سامانه ارزیابی بازاریابی شعب</h1>
         <p>نام کاربری و رمز عبور سازمانی خود را وارد کنید.</p>
-        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        {successMessage && (
+          <div className="alert alert-success">{successMessage}</div>
+        )}
         {error && <div className="alert alert-error">{error}</div>}
         <label>
           نام کاربری

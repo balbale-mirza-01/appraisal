@@ -31,7 +31,6 @@ from .serializers import (
 )
 from .throttles import AuthRateThrottle, PasswordResetRateThrottle
 
-
 User = get_user_model()
 
 
@@ -212,7 +211,7 @@ class PasswordResetRequestView(APIView):
             )
             reset_url = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?{params}"
             send_mail(
-                subject="بازیابی رمز عبور سامانه ارزیابی شعب",
+                subject="بازیابی رمز عبور سامانه ارزیابی بازاریابی شعب",
                 message=(
                     f"{user.get_full_name() or user.username} عزیز،\n\n"
                     "برای تعیین رمز عبور جدید از پیوند زیر استفاده کنید:\n"
@@ -244,9 +243,7 @@ class PasswordResetConfirmView(APIView):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            user_id = force_str(
-                urlsafe_base64_decode(serializer.validated_data["uid"])
-            )
+            user_id = force_str(urlsafe_base64_decode(serializer.validated_data["uid"]))
             user = User.objects.get(pk=user_id, is_active=True)
         except (ValueError, TypeError, OverflowError, User.DoesNotExist):
             return Response(
