@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
 
   backend:
+    image: appraisal-backend
     build: ./backend
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
@@ -50,6 +51,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: appraisal-frontend
     build: ./frontend
     ports:
       - "8080:80"

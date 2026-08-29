@@ -8,8 +8,9 @@ frontend/dist/
 *.tsbuildinfo
 frontend/vite.config.js
 frontend/vite.config.d.ts
-.env
+.env*
 *.log
 .DS_Store
 Thumbs.db
 .offline/
+*.tar*
